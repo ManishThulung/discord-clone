@@ -29,7 +29,7 @@ export const ModalProvider = () => {
       <MembersModal />
       <CreateChannelModal />
       <LeaveServerModal />
-      {/*<DeleteServerModal />
+      {/* <DeleteServerModal />
       <DeleteChannelModal />
       <EditChannelModal />
       <MessageFileModal />
