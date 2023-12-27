@@ -130,6 +130,9 @@ model Conversation {
 
   directMessages DirectMessage[]
 
+   @@index([memberTwoId])
+   @@index([memberOneId])
+
   // the exact same memberId cannot be repeated
   @@unique([memberOneId, memberTwoId])
 }
