@@ -18,7 +18,6 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
       addTrailingSlash: false,
       cors: { origin: "*" },
     });
-    console.log(io, "io");
     res.socket.server.io = io;
 
     io.on("error", (err: any) => {
