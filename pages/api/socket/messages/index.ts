@@ -50,7 +50,7 @@ const index = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
     const member = server.members.find(
       (member) => member.profileId === profile.id
     );
-    if (!member) return res.status(404).json({ error: "Channel not found" });
+    if (!member) return res.status(404).json({ error: "Member not found" });
 
     const message = await db.message.create({
       data: {
@@ -70,7 +70,7 @@ const index = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
 
     const channelKey = `chat:${channelId}:message`;
 
-    res?.socket?.server?.emit(channelKey, message);
+    res?.socket?.server?.io?.emit(channelKey, message);
 
     return res.status(200).json(message);
   } catch (error) {

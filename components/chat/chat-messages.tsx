@@ -58,8 +58,6 @@ export const ChatMessages = ({
       isConnected,
     });
 
-  console.log(data?.pages, "data");
-
   if (status === "pending") {
     return (
       <div className="flex flex-col flex-1 justify-center items-center">
