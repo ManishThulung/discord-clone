@@ -4,7 +4,7 @@ import { Message } from "@prisma/client";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
-const MESSAGES_BATCH = 20;
+const MESSAGES_BATCH = 40;
 
 export async function GET(req: Request) {
   try {
@@ -42,7 +42,7 @@ export async function GET(req: Request) {
           },
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       });
     } else {
@@ -59,7 +59,7 @@ export async function GET(req: Request) {
           },
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       });
     }
