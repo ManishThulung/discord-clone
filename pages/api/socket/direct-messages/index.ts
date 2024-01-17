@@ -10,54 +10,59 @@ const index = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
       return res.status(401).json({ error: "Profile not found" });
     }
 
-    const { channelId, serverId } = req?.query;
+    const { conversationId } = req?.query;
     const { content, fileUrl } = req.body;
 
-    if (!serverId) return res.status(404).json({ error: "Server not found" });
-
-    if (!channelId) return res.status(404).json({ error: "Channel not found" });
+    if (!conversationId)
+      return res.status(404).json({ error: "Conversation not found" });
 
     if (!content)
       return res.status(404).json({ error: "content is required!" });
 
-    const server = await db.server.findFirst({
+    const conversation = await db.conversation.findFirst({
       where: {
-        id: serverId as string,
-        members: {
-          some: {
-            profileId: profile.id,
+        id: conversationId as string,
+        OR: [
+          {
+            memberOne: {
+              profileId: profile.id,
+            },
           },
-        },
+          {
+            memberTwo: {
+              profileId: profile.id,
+            },
+          },
+        ],
       },
       include: {
-        members: {
+        memberOne: {
+          include: {
+            profile: true,
+          },
+        },
+        memberTwo: {
           include: {
             profile: true,
           },
         },
       },
     });
-    if (!server) return res.status(404).json({ error: "Server not found" });
 
-    const channel = await db.channel.findFirst({
-      where: {
-        id: channelId as string,
-        serverId: serverId as string,
-      },
-    });
-    if (!channel) return res.status(404).json({ error: "Channel not found" });
+    if (!conversation)
+      return res.status(404).json({ error: "Conversation not found" });
 
-    const member = server.members.find(
-      (member) => member.profileId === profile.id
-    );
-    if (!member) return res.status(404).json({ error: "Member not found" });
+    const member =
+      conversation.memberOne.profileId === profile.id
+        ? conversation.memberOne
+        : conversation.memberTwo;
 
-    const message = await db.message.create({
+    const message = await db.directMessage.create({
       data: {
         content,
         fileUrl,
         memberId: member.id,
-        channelId: channel.id,
+        conversationId: conversationId as string,
       },
       include: {
         member: {
@@ -68,13 +73,14 @@ const index = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
       },
     });
 
-    const channelKey = `chat:${channelId}:messages`;
+    const channelKey = `chat:${conversationId}:messages`;
 
     res?.socket?.server?.io?.emit(channelKey, message);
 
     return res.status(200).json(message);
+    // return res.status(200).json("message");
   } catch (error) {
-    console.log("error on message");
+    console.log("error on direct message");
     console.log(error);
   }
   return null;
