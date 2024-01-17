@@ -67,12 +67,17 @@ export const useChatSocket = ({
         }
 
         const newData = [...oldData.pages];
+        console.log(newData, "newData");
 
         newData[0] = {
           ...newData[0],
           items: [message, ...newData[0].items],
         };
-
+        const data = {
+          ...oldData,
+          pages: newData,
+        };
+        console.log(data, "data");
         return {
           ...oldData,
           pages: newData,

@@ -84,7 +84,7 @@ export const ChatMessages = ({
   return (
     <>
       <ChatWelcome type={type} name={name} />
-      <div>
+      <div className="flex flex-col-reverse mt-auto">
         {data?.pages?.map((massages, i) => (
           <React.Fragment key={i}>
             {massages?.items?.map((message: MessageWithMemberWithProfile) => (
